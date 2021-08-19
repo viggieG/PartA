@@ -17,23 +17,25 @@ my_rf_cv <- function(k) {
   # create variable to store
   diff <- 0
   # Split data in k parts, randomly
-  inds <- sample(rep(1:k, length = nrow(penguins_clean)))
+  inds <- sample(rep(1:k, length = nrow(drop_na(my_penguins))))
   # combine the inds into data
-  penguins_clean$inds <- inds
+  drop_na(my_penguins)$inds <- inds
   # go through all the data
   for (i in 1:k) {
     # filter the data used to train
-    data_train <- penguins_clean %>% 
-      filter(inds != i)
+    data_train <- drop_na(my_penguins) %>% 
+      dplyr::filter(inds != i)
     # filter the data used to test
-    data_test <-  penguins_clean %>% 
-      filter(inds == i)
+    data_test <-  drop_na(my_penguins) %>% 
+      dplyr::filter(inds == i)
     # build the predicting model
-    model <- randomForest(body_mass_g ~ bill_length_mm + bill_depth_mm  + flipper_length_mm, data = data_train, ntree = 100)
+    model <- randomForest::randomForest(body_mass_g ~ bill_length_mm + 
+                             bill_depth_mm  + flipper_length_mm, 
+                             data = drop_na(my_penguins), ntree = 100)
     # predict the object
     pred <- predict(model, data_test[, -1])
     # store the MSE
-    diff <- append(diff, mean((pred - penguins_clean$body_mass_g) ^ 2))
+    diff <- append(diff, mean((pred - drop_na(my_penguins)$body_mass_g) ^ 2))
   }
   # return the MSE
   return(diff[-1])

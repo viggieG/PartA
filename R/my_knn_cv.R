@@ -28,14 +28,14 @@ my_knn_cv <- function(train, cl, k_nn, k_cv) {
   for (i in 1 : k_cv) {
     # filter the data used to train
     data_train <- train %>% 
-      filter(inds != i)
+      dplyr::filter(inds != i)
     # filter the data used to test
     data_test <- train %>% 
-      filter(inds == i)
+      dplyr::filter(inds == i)
     # create the cl
     cl <- sample(cl, nrow(data_train), replace = TRUE)
     # make predictions
-    pred <- knn(data_train, data_test, cl, k = k_nn)
+    pred <- class::knn(data_train, data_test, cl, k = k_nn)
     # store the predictions
     class <- append(class, pred)
     # store the cv errors
