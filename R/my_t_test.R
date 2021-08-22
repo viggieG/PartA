@@ -6,6 +6,7 @@
 #' @param alternative A character string specifying the alternative hypothesis,
 #'   and it only accepts "two.sided", "less", or "greater".
 #' @param mu A number indicating the null hypothesis value of the mean.
+#' @keywords inference
 #'
 #' @return A list with elements test_stat, the numeric test statistic, df, the
 #'   degrees of freedom, \code{alternative} and p_val, the numeric p-value.

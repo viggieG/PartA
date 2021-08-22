@@ -5,6 +5,7 @@
 #' @param formula A formula class object : a symbolic description of the model 
 #'   to be fitted.
 #' @param data Input data frame.
+#' @keywords inference
 #'
 #' @return A coefficient table with rows for each coefficient (including the 
 #'   (Intercept)!) and columns for the Estimate, Std. Error, t value, and 

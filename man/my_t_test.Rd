@@ -21,3 +21,4 @@ degrees of freedom, \code{alternative} and p_val, the numeric p-value.
 \description{
 This function performs a one sample t-test.
 }
+\keyword{inference}

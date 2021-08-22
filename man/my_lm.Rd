@@ -25,3 +25,4 @@ my_lm(y ~ x ^ 2, dataset)
 my_lm(y ~ x, dataset)
 
 }
+\keyword{inference}

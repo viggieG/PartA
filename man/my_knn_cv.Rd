@@ -28,3 +28,4 @@ my_knn_cv(data, cl, 5, 5)
 my_knn_cv(data, cl, 1, 10)
 
 }
+\keyword{prediction}
