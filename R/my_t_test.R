@@ -14,7 +14,7 @@
 #' my_t.test(data, less, 2)
 #' 
 #' @export
-my_t.test <- function(x, alternative, mu) {
+my_t_test <- function(x, alternative, mu) {
   # filter the alternative. Limited to specific choice
   if (alternative == "two.sided" | alternative == "less" | 
          alternative == "greater") {

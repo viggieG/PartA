@@ -7,7 +7,7 @@
 my_knn_cv(train, cl, k_nn, k_cv)
 }
 \arguments{
-\item{train}{Input data frame.}
+\item{train}{Input data frame used as covariates.}
 
 \item{cl}{True class value of the training data.}
 

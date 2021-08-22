@@ -15,13 +15,19 @@ You can install the released version of PartA from [CRAN](https://CRAN.R-project
 install.packages("PartA")
 ```
 
+## Use
+
 To view vignette, run the following code :
 
 ``` r
-devtools::install_github("viggieG/PartA", build_vignette = TRUE, build_opts = c())
+devtools::install_github("viggieG/PartA", build_vignette = TRUE, 
+build_opts = c())
+
 library(PartA)
+
 # Use this to view the vignette in the PartA HTML help
 help(package = "PartA", help_type = "html")
+
 # Use this to view the vignette as an isolated HTML file
 utils::browseVignettes(package = "PartA")
 ```

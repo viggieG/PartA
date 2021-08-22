@@ -15,6 +15,219 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r setup}
-library(PartA)
+## Introduction
+
+This package is the first part for UW STAT 302 Project 3. In this package, it 
+includes four functions, my_t.test, my_lm, my_knn_cv and my_rf_cv, and also two data, my_penguins and my_gapminder.
+
+To use this package, installment is the required step, which could be done by installing from GitHub. 
+
+The below code could be used to install from GitHub.
+```{r, eval = FALSE, message = FALSE}
+devtools::install_github("viggieG/PartA")
 ```
+
+To begin, let's load our package and other related ones used in package functions.
+```{r, eval = FALSE, message = FALSE}
+library(PartA)
+library(class)
+library(randomForest)
+library(dplyr)
+library(ggplot2)
+library(tidyr)
+```
+
+After finish all the steps above, package function tutorial now begins!
+
+## Tutorial for my_t.test
+
+For this part, it illustrates three conditions for my_t.test function, two.sided, greater and less. At the same time, we set the p-value cut-off to be α=0.05.
+
+The below code demonstrates the alternative hypothesis that mu is not equal to 60
+```{r, message = FALSE}
+my_t_test(my_gapminder$lifeExp, "two.sided", 60)
+```
+
+For this condition, since the p_val is greater than 0.05, we do not reject the null hypothesis.
+
+The below code demonstrates the alternative hypothesis that mu is less than 60
+```{r, message = FALSE}
+my_t_test(my_gapminder$lifeExp, "less", 60)
+```
+
+For this condition, since the p_val is less than 0.05, we reject the null hypothesis.
+
+The below code demonstrates the alternative hypothesis that mu is greater than 60
+```{r, message = FALSE}
+my_t_test(my_gapminder$lifeExp, "greater", 60)
+```
+
+For this condition, since the p_val is greater than 0.05, we do not reject the null hypothesis.
+
+## Tutorial for my_lm
+```{r, message = FALSE, warning = FALSE}
+# construct the model
+pred_model <- my_lm(lifeExp ~ gdpPercap + continent, my_gapminder)
+pred_model
+```
+
+From the above results, we can see that gdpPercap predictor variables are statistically significant because its p-values are all less than 0.05. 
+All of its results' signs show positive, so it is positively related to the response variable.
+
+For this linear model, the p-value for each independent variable tests two null hypothesis. One is that the variable has no correlation with the dependent variable. It is the same for gdpPercap. This null hypothesis for it is that the gdpPercap has no correlation with the lifeExp, but the p value of it is less than 0.05. Thus gdpPercap sample data provide enough evidence to reject the null hypothesis for the entire population, and show there is a non-zero correlation between them.
+
+The second one is whether or not the gdpPercap coefficient is equal to zero. Considering its p value is less than 0.05, so gdpPercap sample data provide enough evidence to reject the null. That is, the gdpPercap coefficient is not equal to zero.
+
+```{r, message = FALSE}
+# construct the fitted model data
+mod_fits <- model.matrix(lifeExp ~ gdpPercap + continent, my_gapminder) %*%               pred_model[, 1] 
+
+# store the actual and fitted data
+my_df <- data.frame(actual = my_gapminder$lifeExp, fitted = mod_fits)
+
+# draw the actual vs. fitted graph
+ggplot(my_df, aes(x = fitted, y = actual)) +
+  geom_point() +
+  # draw the trend line
+  geom_abline(slope = 1, intercept = 0, col = "red", lty = 2) + 
+  theme_bw(base_size = 15) +
+  # draw the title and axes
+  labs(x = "Fitted values", y = "Actual values", title = "Actual vs. Fitted") +
+  theme(plot.title = element_text(hjust = 0.5))
+```
+
+From the graph above, we can clearly see that the model fitting situation is not happy. Multiple actual values match one single fitted value at the same time. Though this model indeed makes correct predictions at some values, data dispersion is too big to make up.
+
+## Tutorial for my_knn_cv
+
+Before getting into this part, I would like to introduce what the process of cross-validation is doing and why it is useful. 
+
+According to its specific concept, cross-validation is a resampling procedure used to evaluate machine learning models on a limited data sample. The procedure has a single parameter called k that refers to the number of groups that a given data sample is to be split into. It will repeat k times. Each time it will use 1/k group data as test data and remaining as the training data to build the model.
+
+The reason why it is useful is that it gives model the opportunity to train on multiple train-test splits. This gives a better indication of how well model will perform on unseen data. Hold-out, on the other hand, is dependent on just one train-test split.
+
+That's the end for introduction. Now let's begin our trip!
+
+```{r, message = FALSE, warning = FALSE}
+# clean all NAs from the data
+my_penguins <- drop_na(my_penguins)
+
+# select the covariats we need
+train_penguins <- my_penguins %>%
+  select(bill_length_mm,bill_depth_mm,flipper_length_mm,body_mass_g)
+
+# construct the model with different k_nn
+knn1 <- my_knn_cv(train_penguins, my_penguins$species, 1, 5)
+knn2 <- my_knn_cv(train_penguins, my_penguins$species, 2, 5)
+knn3 <- my_knn_cv(train_penguins, my_penguins$species, 3, 5)
+knn4 <- my_knn_cv(train_penguins, my_penguins$species, 4, 5)
+knn5 <- my_knn_cv(train_penguins, my_penguins$species, 5, 5)
+knn6 <- my_knn_cv(train_penguins, my_penguins$species, 6, 5)
+knn7 <- my_knn_cv(train_penguins, my_penguins$species, 7, 5)
+knn8 <- my_knn_cv(train_penguins, my_penguins$species, 8, 5)
+knn9 <- my_knn_cv(train_penguins, my_penguins$species, 9, 5)
+knn10 <- my_knn_cv(train_penguins, my_penguins$species, 10, 5)
+
+# build a matrix to show the CV
+CV <- c(knn1[2], knn2[2], knn3[2], knn4[2], knn5[2], knn6[2], knn7[2], knn8[2], knn9[2], knn10[2])
+CV
+
+# build a matrix to show the training error
+training <- c((knn1[1] != my_penguins$species), length(knn2[1] != my_penguins$species), length(knn3[1] != my_penguins$species), length(knn4[1] != my_penguins$species), length(knn5[1] != my_penguins$species), length(knn6[1] != my_penguins$species), length(knn7[1] != my_penguins$species), length(knn8[1] != my_penguins$species), length(knn9[1] != my_penguins$species), length(knn10[1] != my_penguins$species))
+training
+```
+
+Based on the CV misclassification rates, I would choose the model with k_nn = 1, because it has the lowest CV rates.
+
+I would choose the model with k_nn = 1 in practice, because it has the lowest CV rates, and CV rates can more clearly show the the percentage of classifications that were incorrect comparing to the real data than the training ones.
+
+## Tutorial for my_rf_cv
+```{r, message = FALSE, warning = FALSE}
+# construct three list to store the results
+pred1 <- 0
+pred2 <- 0
+pred3 <- 0
+
+# run each k thirty times and store
+for (i in 1 : 30) {
+  pred1 <- append(pred1, my_rf_cv(2))
+  pred2 <- append(pred2, my_rf_cv(5))
+  pred3 <- append(pred3, my_rf_cv(10))
+}
+
+# clean the 0 from the list
+pred1 <- pred1[-1]
+pred2 <- pred2[-1]
+pred3 <- pred3[-1]
+
+# create the number of simulations used in graphing
+ob1 <- rep(1 : 30, each = 2)
+ob2 <- rep(1 : 30, each = 5)
+ob3 <- rep(1 : 30, each = 10)
+
+# create each k's data frame
+k2 <- data_frame("observation" = ob1,
+                      "CV" = pred1)
+k5 <- data_frame("observation" = ob2,
+                      "CV" = pred2)
+k10 <- data_frame("observation" = ob3,
+                      "CV" = pred3)
+
+# draw the box plot for k = 2
+ggplot(data = k2, 
+       aes(x = observation, y = CV )) +
+  geom_boxplot(fill = "lightblue") +
+  theme_bw(base_size = 20) +
+  labs(title = "CV Estimated of K = 2", 
+       x = "Simulations", 
+       y = "MSE") +
+  theme(plot.title =
+          element_text(hjust = 0.5))
+
+# draw the box plot for k = 5
+ggplot(data = k5, 
+       aes(x = observation, y = CV )) +
+  geom_boxplot(fill = "lightblue") +
+  theme_bw(base_size = 20) +
+  labs(title = "CV Estimated of K = 5", 
+       x = "Simulations", 
+       y = "MSE") +
+  theme(plot.title =
+          element_text(hjust = 0.5))
+
+# draw the box plot for k = 10
+ggplot(data = k10, 
+       aes(x = observation, y = CV )) +
+  geom_boxplot(fill = "lightblue") +
+  theme_bw(base_size = 20) +
+  labs(title = "CV Estimated of K = 10", 
+       x = "Simulations", 
+       y = "MSE") +
+  theme(plot.title =
+          element_text(hjust = 0.5))
+
+# build a matrix to store the mean and std deviation
+mean_std <- matrix(c(mean(pred1), sd(pred1), mean(pred2), sd(pred2), mean(pred3), sd(pred3)),ncol = 2, nrow = 3)
+
+# classify the data meaning and k
+colnames(mean_std) <- c("Mean","Std dev")
+rownames(mean_std) <- c("k = 2", "k = 5", "k = 10")
+mean_std
+```
+
+From the above boxplots and the table, we can clearly see that with increasing 
+k, the mean of MSE is decreasing, like k = 2 and k = 10. Also, with the 
+increasing k, the standard deviation is increasing. This situation is caused by
+the bias and variance tradeoff. With higher k, Our bias is decreasing because we 
+are training our model to be more specific to our training data. The variance is
+increasing because our model will be overfit, and will vary substantially with 
+new training data.
+
+The k = 5 shows different moves probably because its data has high dispersion 
+and lower number of extreme values. For it, it does show much lower mean and 
+extremely high standard deviation. However, if simply compare k = 5 to k = 2, it
+still follows the above rules: higher k, lower mean and higher standard deviation.
+
+
+
+

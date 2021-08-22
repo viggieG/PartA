@@ -2,7 +2,7 @@
 #' 
 #' This function builds a k-nearest neighbors cross-validation predicting model.
 #' 
-#' @param train Input data frame.
+#' @param train Input data frame used as covariates.
 #' @param cl True class value of the training data.
 #' @param k_nn Integer representing the number of neighbors.
 #' @param k_cv Integer representing the number of folds.
