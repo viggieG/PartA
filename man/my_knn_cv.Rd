@@ -23,9 +23,4 @@ misclassification error.
 \description{
 This function builds a k-nearest neighbors cross-validation predicting model.
 }
-\examples{
-my_knn_cv(data, cl, 5, 5)
-my_knn_cv(data, cl, 1, 10)
-
-}
 \keyword{prediction}

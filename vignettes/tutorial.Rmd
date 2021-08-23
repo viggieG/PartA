@@ -45,6 +45,7 @@ For this part, it illustrates three conditions for my_t.test function, two.sided
 
 The below code demonstrates the alternative hypothesis that mu is not equal to 60
 ```{r, message = FALSE}
+library(PartA)
 my_t_test(my_gapminder$lifeExp, "two.sided", 60)
 ```
 
@@ -52,6 +53,7 @@ For this condition, since the p_val is greater than 0.05, we do not reject the n
 
 The below code demonstrates the alternative hypothesis that mu is less than 60
 ```{r, message = FALSE}
+library(PartA)
 my_t_test(my_gapminder$lifeExp, "less", 60)
 ```
 
@@ -59,6 +61,7 @@ For this condition, since the p_val is less than 0.05, we reject the null hypoth
 
 The below code demonstrates the alternative hypothesis that mu is greater than 60
 ```{r, message = FALSE}
+library(PartA)
 my_t_test(my_gapminder$lifeExp, "greater", 60)
 ```
 
@@ -66,6 +69,7 @@ For this condition, since the p_val is greater than 0.05, we do not reject the n
 
 ## Tutorial for my_lm
 ```{r, message = FALSE, warning = FALSE}
+library(tibble)
 # construct the model
 pred_model <- my_lm(lifeExp ~ gdpPercap + continent, my_gapminder)
 pred_model
@@ -79,6 +83,7 @@ For this linear model, the p-value for each independent variable tests two null 
 The second one is whether or not the gdpPercap coefficient is equal to zero. Considering its p value is less than 0.05, so gdpPercap sample data provide enough evidence to reject the null. That is, the gdpPercap coefficient is not equal to zero.
 
 ```{r, message = FALSE}
+library(ggplot2)
 # construct the fitted model data
 mod_fits <- model.matrix(lifeExp ~ gdpPercap + continent, my_gapminder) %*%               pred_model[, 1] 
 
@@ -109,6 +114,8 @@ The reason why it is useful is that it gives model the opportunity to train on m
 That's the end for introduction. Now let's begin our trip!
 
 ```{r, message = FALSE, warning = FALSE}
+library(tidyverse)
+
 # clean all NAs from the data
 my_penguins <- drop_na(my_penguins)
 
@@ -128,16 +135,19 @@ knn8 <- my_knn_cv(train_penguins, my_penguins$species, 8, 5)
 knn9 <- my_knn_cv(train_penguins, my_penguins$species, 9, 5)
 knn10 <- my_knn_cv(train_penguins, my_penguins$species, 10, 5)
 
+# build a matrix to show the training
+TM <- c(mean(knn1[1] != my_penguins$species), mean(knn2[1] != my_penguins$species), mean(knn3[1] != my_penguins$species), mean(knn4[1] != my_penguins$species), mean(knn5[1] != my_penguins$species), mean(knn6[1] != my_penguins$species), mean(knn7[1] != my_penguins$species), mean(knn8[1] != my_penguins$species), mean(knn9[1] != my_penguins$species), mean(knn10[1] != my_penguins$species))
+
 # build a matrix to show the CV
 CV <- c(knn1[2], knn2[2], knn3[2], knn4[2], knn5[2], knn6[2], knn7[2], knn8[2], knn9[2], knn10[2])
 CV
 
-# build a matrix to show the training error
-training <- c((knn1[1] != my_penguins$species), length(knn2[1] != my_penguins$species), length(knn3[1] != my_penguins$species), length(knn4[1] != my_penguins$species), length(knn5[1] != my_penguins$species), length(knn6[1] != my_penguins$species), length(knn7[1] != my_penguins$species), length(knn8[1] != my_penguins$species), length(knn9[1] != my_penguins$species), length(knn10[1] != my_penguins$species))
-training
 ```
 
-Based on the CV misclassification rates, I would choose the model with k_nn = 1, because it has the lowest CV rates.
+Based on the training misclassification rates, I would choose the model with 
+k_nn = 10, because it has the lowest taining rates, which is caused by the high 
+sensitive for the actual values. Based on the CV misclassification rates, I 
+would choose the model with k_nn = 1, because it has the lowest CV rates.
 
 I would choose the model with k_nn = 1 in practice, because it has the lowest CV rates, and CV rates can more clearly show the the percentage of classifications that were incorrect comparing to the real data than the training ones.
 

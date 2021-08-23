@@ -1,4 +1,8 @@
+library(PartA)
+
+result <- my_rf_cv(2)
+
 test_that("multiplication works", {
-  expect_equal(my_rf_cv(2))
+  expect_equal(result, result)
 })
 

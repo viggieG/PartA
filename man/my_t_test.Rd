@@ -2,7 +2,7 @@
 % Please edit documentation in R/my_t_test.R
 \name{my_t_test}
 \alias{my_t_test}
-\title{T.test function}
+\title{T_test function}
 \usage{
 my_t_test(x, alternative, mu)
 }

@@ -1,29 +1,30 @@
 #' Linear model function
-#' 
+#'
 #' This function fits a linear model.
-#' 
-#' @param formula A formula class object : a symbolic description of the model 
+#'
+#' @param formula A formula class object : a symbolic description of the model
 #'   to be fitted.
 #' @param data Input data frame.
 #' @keywords inference
 #'
-#' @return A coefficient table with rows for each coefficient (including the 
-#'   (Intercept)!) and columns for the Estimate, Std. Error, t value, and 
+#' @return A coefficient table with rows for each coefficient (including the
+#'   (Intercept)!) and columns for the Estimate, Std. Error, t value, and
 #'   Pr(>|t|).
-#'   
+#'
 #' @examples
-#' my_lm(y ~ x ^ 2, dataset)
-#' my_lm(y ~ x, dataset)
-#' 
+#' my_lm(lifeExp ~ gdpPercap, my_gapminder)
+#' my_lm(lifeExp ~ gdpPercap + continent, my_gapminder)
+#'
 #' @export
 my_lm <- function(formula, data) {
+  library(tibble)
   # to extract a model frame object
-  dt_frame <- model.frame(formula, data) 
+  dt_frame <- model.frame(formula, data)
   # to extract the model matrix
-  x <- model.matrix(formula, data) 
+  x <- model.matrix(formula, data)
   # to extract the model response
   y <- model.response(dt_frame)
-  
+
   # calculate the estimate
   esti <- solve(t(x) %*% x) %*% t(x) %*% y
   # calculate the df
@@ -36,7 +37,7 @@ my_lm <- function(formula, data) {
   t_val <- esti / std_err
   # calculate the p value
   p_val <- pt(abs(t_val), df, lower.tail = FALSE) * 2
-  
+
   # construct a frame to store the values
   tab <- data_frame("Estimate" = esti,
                     "Std. Error" = std_err,

@@ -21,8 +21,8 @@ Pr(>|t|).
 This function fits a linear model.
 }
 \examples{
-my_lm(y ~ x ^ 2, dataset)
-my_lm(y ~ x, dataset)
+my_lm(lifeExp ~ gdpPercap, my_gapminder)
+my_lm(lifeExp ~ gdpPercap + continent, my_gapminder)
 
 }
 \keyword{inference}
