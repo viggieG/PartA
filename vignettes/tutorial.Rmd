@@ -114,7 +114,7 @@ The reason why it is useful is that it gives model the opportunity to train on m
 That's the end for introduction. Now let's begin our trip!
 
 ```{r, message = FALSE, warning = FALSE}
-library(tidyverse)
+install.packages("tidyverse")
 
 # clean all NAs from the data
 my_penguins <- drop_na(my_penguins)
